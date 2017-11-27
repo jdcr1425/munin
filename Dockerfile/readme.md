@@ -3,39 +3,33 @@
 ## Primer paso
 Debes construir un docker personalizado que incluye el servidor openssh
 
-    docker build -t server:16.04 .
+-Con nuestro Dockerfile construiremos la imagen de nuestros dockers. 
 
-En el paso anterior debes verificar el ID de la imágen que se creó y seleccionarla para los pasos a continuación.
+Usamos el siguiente comando en nuestra consola: 
+               
+               docker build -t server:16.04 .
 
 ## Segundo paso, despliege
 
-Ahora debes crear un conjunto de maquinas para pruebas, se crearán automáticamente un servidor `nginx`, uno de bases de datos en `mysql` y un servidor noSQL en `redis`.
+Ahora debes crear una maquinas para el despliegue, se creará  un servidor Apache.
 
-    0.0.0.0:6379->6379/tcp, 0.0.0.0:2223->22/tcp   server03
-    0.0.0.0:3306->3306/tcp, 0.0.0.0:2222->22/tcp   server02
-    0.0.0.0:2221->22/tcp, 0.0.0.0:8000->80/tcp     server01
+Usamos el siguiente comando en nuestra consola: 
 
-Si lo deseas puedes modificar el archivo `create_dockers.sh` ajustando los parametros que consideres necesarios para lanzar los dockers que se ajusten al experimento que diseñes.
+docker run -d -P --name munin_web_server -p 2221:22 -p 80:80 server:16.04 
 
-    ../create_dockers.sh server:16.04
+# tercer paso,Adicionar las llaves ssh</h3>
 
-## Tercer paso, configuración de alias
-Opción 1: edita el archivo `/etc/hosts` y adiciona 3 alias a localhost
+Usamos los siguientes comandos en nuestra consola: 
 
-    127.0.0.1       server01 server02 server03
+ssh -o StrictHostKeyChecking=no root@127.0.0.1 -p 2221 -i key.private hostname
 
-Opción 2: adición automática en el archivo de hosts del sistema
-
-    echo "127.0.0.1 server01 server02 server03" | sudo tee -a /etc/hosts
 
 ## Cuarto paso, confirmación
-Realiza una prueba de conexión a las maquinas que se crearon recientemente, por defecto el paso anterior crea n cantidad de dockers con el `puerto 2221, 2222 y 2223` abiertos para conexión:
+Realiza una prueba de conexión a la maquina que se creó recientemente.
 
-    ssh root@server01 -p 2221 -i ../key.private
-    ssh root@server02 -p 2222 -i ../key.private
-    ssh root@server03 -p 2223 -i ../key.private
+    ssh root@172.168.0.1 -p 2221 -i ../key.private
 
-Si la conexión se establece, ya está listo el banco de pruebas y puedes ingresar a ansible001.
+Si la conexión se establece, ya está listo el banco de pruebas y puedes ingresar a ansible.
 
 
 
