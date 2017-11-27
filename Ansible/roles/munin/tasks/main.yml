@@ -5,6 +5,9 @@
 - name: aaaa
   command: apt-get install -y libcgi-fast-perl libapache2-mod-fcgid
 
+- name: d
+  file: path="/var/www/html/index.html" owner="root" group="root" state=absent
+
 - name: Copy munin configurations.
   template:
     src: "{{ item.src }}"
@@ -19,6 +22,8 @@
       dest: "{{ munin_confdir }}/hosts.conf"
     - src: apache.conf.j2
       dest: "{{ munin_dir }}/apache.conf"
+    - src: index.html
+      dest: "/var/www/html/index.html"
 
 - name: Create munin www directory
   file: path="{{ munin_htmldir }}" owner="munin" group="munin" state=directory
